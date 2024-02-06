@@ -2,7 +2,7 @@
 -- version 4.9.5deb2
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:3306
+-- Hôte : localhost:3307
 -- Généré le : lun. 07 déc. 2020 à 12:31
 -- Version du serveur :  10.3.25-MariaDB-0ubuntu0.20.04.1
 -- Version de PHP : 7.4.3

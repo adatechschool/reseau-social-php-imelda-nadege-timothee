@@ -25,7 +25,7 @@
             /**
              * Etape 2: se connecter à la base de donnée
              */
-            $mysqli = new mysqli("localhost", "root", "root", "socialnetwork");
+            $mysqli = new mysqli("localhost", "root", "", "socialnetwork");
             ?>
 
             <aside>
@@ -37,13 +37,12 @@
                 $lesInformations = $mysqli->query($laQuestionEnSql);
                 $tag = $lesInformations->fetch_assoc();
                 //@todo: afficher le résultat de la ligne ci dessous, remplacer XXX par le label et effacer la ligne ci-dessous
-                echo "<pre>" . print_r($tag, 1) . "</pre>";
                 ?>
                 <img src="user.jpg" alt="Portrait de l'utilisatrice"/>
                 <section>
                     <h3>Présentation</h3>
                     <p>Sur cette page vous trouverez les derniers messages comportant
-                        le mot-clé XXX
+                        le mot-clé <?php echo $tag['label']?>
                         (n° <?php echo $tagId ?>)
                     </p>
 
@@ -57,6 +56,7 @@
                 $laQuestionEnSql = "
                     SELECT posts.content,
                     posts.created,
+                    posts.user_id,
                     users.alias as author_name,  
                     count(likes.id) as like_number,  
                     GROUP_CONCAT(DISTINCT tags.label) AS taglist 
@@ -82,24 +82,17 @@
                 while ($post = $lesInformations->fetch_assoc())
                 {
 
-                    echo "<pre>" . print_r($post, 1) . "</pre>";
                     ?>                
                     <article>
                         <h3>
-                            <time datetime='2020-02-01 11:12:13' >31 février 2010 à 11h12</time>
+                            <time datetime='2020-02-01 11:12:13' ><?php echo $post['created']?></time>
                         </h3>
-                        <address>par AreTirer</address>
+                        <address>par <a href="wall.php?user_id=<?php echo $post['user_id']?>"><?php echo $post['author_name']?></address></a>
                         <div>
-                            <p>Ceci est un paragraphe</p>
-                            <p>Ceci est un autre paragraphe</p>
-                            <p>... de toutes manières il faut supprimer cet 
-                                article et le remplacer par des informations en 
-                                provenance de la base de donnée</p>
-                        </div>                                            
+                            <p><?php echo $post['content']?></p>   
                         <footer>
-                            <small>♥ 132</small>
-                            <a href="">#lorem</a>,
-                            <a href="">#piscitur</a>,
+                            <small>♥ <?php echo $post['like_number']?></small>
+                            <a href="tags.php?tag_id=<?php echo $tagId?>">#<?php echo $post['taglist']?></a>,
                         </footer>
                     </article>
                 <?php } ?>
