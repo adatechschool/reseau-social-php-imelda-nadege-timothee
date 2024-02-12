@@ -8,7 +8,12 @@
     </head>
     <body>
     <?php
+    session_start();
         include './header.php';
+        $scheme = $_SERVER['REQUEST_SCHEME'];
+        $host = $_SERVER['HTTP_HOST'];
+        $uri = $_SERVER['REQUEST_URI'];
+        $current_url = "$scheme://$host$uri";
         ?>
         <div id="wrapper">
             <?php
@@ -74,27 +79,27 @@
                         <div>
                             <p><?php echo $post['content']?></p>   
                             <?php
-                            session_start();
 
                             $connected_id = intval($_SESSION['connected_id']);
-
                             $post_id = $post['id'];
-                            
                             $addLike = 'INSERT INTO likes (user_id, post_id) '
                             . "VALUES ('$connected_id' , '$post_id')";
                             
-                            if (isset($_POST['like'])){ 
+                            if (isset($_POST["like_$post_id"])){ 
                                 $mysqli->query($addLike); 
                                 
                                 $getNumLike = "SELECT COUNT(id) as like_number FROM likes WHERE post_id = $post_id";
-                                
-                                $mysqli->query($getNumLike);
+                                $like_num = $mysqli->query($getNumLike);
+                                if ($like_num){
+                                    $newLikeCount = $like_num->fetch_assoc()['like_number'];
+                                    $post['like_number'] = $newLikeCount;
+                                }
                             }
                             ?>
-                        <form action="" method="post">
+                        <form action="<?php echo $current_url ?>" method="post">
                             <footer>
                                 <small>     
-                                <input type="submit" value="♥ <?php echo $post['like_number']?>" name="like">
+                                <input type="submit" value="♥ <?php echo $post['like_number']?>" name="like_<?php echo $post_id?>">
                                 </small>
                                 <a href="tags.php?tag_id=<?php echo $tag['id']?>"><?php echo $post['taglist']?></a>,
                             </footer>

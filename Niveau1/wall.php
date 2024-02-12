@@ -7,10 +7,17 @@
         <link rel="stylesheet" href="style.css"/>
     </head>
     <body>
-        <?php include './header.php' ?>
+        <?php 
+        include './header.php'; 
+        include './displayPosts.php';
+        ?>
         <div id="wrapper">
             <?php
             session_start();
+            $scheme = $_SERVER['REQUEST_SCHEME'];
+            $host = $_SERVER['HTTP_HOST'];
+            $uri = $_SERVER['REQUEST_URI'];
+            $current_url = "$scheme://$host$uri";
             
             $userId = intval($_GET['user_id']);
             $connected_id = intval($_SESSION['connected_id']);
@@ -59,7 +66,7 @@
                 <?php
 
                 $laQuestionEnSql = "
-                    SELECT posts.content, posts.created, users.alias as author_name, 
+                    SELECT posts.content, posts.created, users.alias as author_name, posts.id,
                     COUNT(likes.id) as like_number, GROUP_CONCAT(DISTINCT tags.label) AS taglist 
                     FROM posts
                     JOIN users ON  users.id=posts.user_id
@@ -77,8 +84,22 @@
                 }
 
 
-                while ($post = $lesInformations->fetch_assoc())
-                {
+                while ($post = $lesInformations->fetch_assoc()){
+                    $post_id = $post['id'];
+
+                    if (isset($_POST["like_$post_id"])) {
+                        $addLike = $mysqli->prepare("INSERT INTO likes (user_id, post_id) VALUES (?, ?)");
+                        $addLike->bind_param("ii", $connected_id, $post_id);
+                        $addLike->execute();
+
+                        $getNumLike = "SELECT COUNT(id) as like_number FROM likes WHERE post_id = $post_id";
+                        $result = $mysqli->query($getNumLike);
+
+                        if ($result) {
+                            $newLikeCount = $result->fetch_assoc()['like_number'];
+                            $post['like_number'] = $newLikeCount;
+                        }
+                    }
 
                     ?>                
                     <article>
@@ -90,10 +111,14 @@
                             <p><?php echo $post['content']?></p>
                             
                         </div>                                            
-                        <footer>
-                            <small>♥ <?php echo $post['like_number']?></small>
-                            <a href="php.tags?">#<?php echo $post['taglist']?></a>,
-                        </footer>
+                        <form action="<?php echo $current_url?>" method="post">
+                            <footer>
+                                <small>     
+                                    <input type="submit" value="♥ <?php echo $post['like_number']?>" name="like_<?php echo $post_id?>">
+                                </small>
+                                <a href="tags.php?tag_id=<?php echo $tag['id']?>"><?php echo $post['taglist']?></a>,
+                            </footer>
+                        </form>
                     </article>
                 <?php } ?>
 
