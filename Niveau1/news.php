@@ -18,21 +18,10 @@
                     <p>Sur cette page vous trouverez les derniers messages de
                         tous les utilisatrices du site.</p>
                 </section>
-            </aside>
+            </aside>    
             <main>
                 <?php
-                /*
-                  // C'est ici que le travail PHP commence
-                  // Votre mission si vous l'acceptez est de chercher dans la base
-                  // de données la liste des 5 derniers messsages (posts) et
-                  // de l'afficher
-                  // Documentation : les exemples https://www.php.net/manual/fr/mysqli.query.php
-                  // plus généralement : https://www.php.net/manual/fr/mysqli.query.php
-                 */
-
-                // Etape 1: Ouvrir une connexion avec la base de donnée.
                 $mysqli = new mysqli("localhost", "root", "", "socialnetwork");
-                //verification
                 if ($mysqli->connect_errno)
                 {
                     echo "<article>";
@@ -43,11 +32,10 @@
                 
                 }
                 
-                // Etape 2: Poser une question à la base de donnée et récupérer ses informations
-                // cette requete vous est donnée, elle est complexe mais correcte, 
-                // si vous ne la comprenez pas c'est normal, passez, on y reviendra
+
                 $laQuestionEnSql = "
                     SELECT posts.content,
+                    posts.id,
                     posts.created,
                     users.alias as author_name,
                     posts.user_id,  
@@ -63,7 +51,6 @@
                     LIMIT 5
                     ";
                 $lesInformations = $mysqli->query($laQuestionEnSql);
-                // Vérification
                 if ( ! $lesInformations)
                 {
                     echo "<article>";
@@ -72,15 +59,8 @@
                     exit();
                 }
 
-                // Etape 3: Parcourir ces données et les ranger bien comme il faut dans du html
-                // NB: à chaque tour du while, la variable post ci dessous reçois les informations du post suivant.
                 while ($post = $lesInformations->fetch_assoc())
                 {
-                    // @todo : Votre mission c'est de remplacer les AREMPLACER par les bonnes valeurs
-                    // ci-dessous par les bonnes valeurs cachées dans la variable $post 
-                    // on vous met le pied à l'étrier avec created
-                    // 
-                    // avec le ? > ci-dessous on sort du mode php et on écrit du html comme on veut... mais en restant dans la boucle
                     ?>
                     <article>
                         <h3>
@@ -90,14 +70,38 @@
                         <div>
                             <p><?php echo $post['content']?></p>
                         </div>
-                        <footer>
-                            <small>♥ <?php echo $post['like_number']?></small>
-                            <a href="tags.php?tag_id=<?php echo $tag['id']?>"><?php echo $post['taglist']?></a>,
-                        </footer>
+
+                        <?php
+                            session_start();
+
+                            $connected_id = intval($_SESSION['connected_id']);
+
+                            $post_id = $post['id'];
+                            
+                            $addLike = 'INSERT INTO likes (user_id, post_id) '
+                            . "VALUES ('$connected_id' , '$post_id')";
+                            
+                            if (isset($_POST["like_$post_id"])){ 
+                                $mysqli->query($addLike); 
+                                
+                                $getNumLike = "SELECT COUNT(id) as like_number FROM likes WHERE post_id = $post_id";
+                                
+                                $mysqli->query($getNumLike);
+                            }
+                            ?>
+                        <form action="" method="post">
+                            <footer>
+                                <small>     
+                                <input type="submit" value="♥ <?php echo $post['like_number']?>" name="like_<?php echo $post_id?>">
+                                </small>
+                                <a href="tags.php?tag_id=<?php echo $tag['id']?>"><?php echo $post['taglist']?></a>,
+                            </footer>
+                        </form>
+
+
                     </article>
                     <?php
-                    // avec le <?php ci-dessus on retourne en mode php 
-                }// cette accolade ferme et termine la boucle while ouverte avant.
+                }
                 ?>
 
             </main>

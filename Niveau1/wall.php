@@ -10,31 +10,24 @@
         <?php include './header.php' ?>
         <div id="wrapper">
             <?php
-            /**
-             * Etape 1: Le mur concerne un utilisateur en particulier
-             * La première étape est donc de trouver quel est l'id de l'utilisateur
-             * Celui ci est indiqué en parametre GET de la page sous la forme user_id=...
-             * Documentation : https://www.php.net/manual/fr/reserved.variables.get.php
-             * ... mais en résumé c'est une manière de passer des informations à la page en ajoutant des choses dans l'url
-             */
-            $userId =intval($_GET['user_id']);
+            session_start();
+            
+            $userId = intval($_GET['user_id']);
+            $connected_id = intval($_SESSION['connected_id']);
+
             ?>
+
             <?php
-            /**
-             * Etape 2: se connecter à la base de donnée
-             */
+
             $mysqli = new mysqli("localhost", "root", "", "socialnetwork");
             ?>
 
             <aside>
                 <?php
-                /**
-                 * Etape 3: récupérer le nom de l'utilisateur
-                 */                
+                
                 $laQuestionEnSql = "SELECT * FROM users WHERE id= '$userId' ";
                 $lesInformations = $mysqli->query($laQuestionEnSql);
                 $user = $lesInformations->fetch_assoc();
-                //@todo: afficher le résultat de la ligne ci dessous, remplacer XXX par l'alias et effacer la ligne ci-dessous
                 ?>
                 <img src="user.jpg" alt="Portrait de l'utilisatrice"/>
                 <section>
@@ -43,12 +36,28 @@
                         (n° <?php echo $userId ?>)
                     </p>
                 </section>
+
+                <?php 
+                    $addFollower = 'INSERT INTO followers (followed_user_id, following_user_id) '
+                    . "VALUES ('$userId', '$connected_id')";
+
+                    if ($userId != $connected_id && isset($_POST['follow'])){
+                        $ok = $mysqli->query($addFollower);
+                        if (! $ok) {echo "Il y a eu un problème lors du follow : " . $mysqli->error;}
+                        else {echo "Vous avez follow avec succès";}
+                    }
+                ?>
+                <?php if($userId != $connected_id){ ?>
+                    <form action="wall.php?user_id=<?php echo $userId?>" method="post">
+                        <p><input type="submit" value="Follow" name="follow"></p>
+                    </form>
+                <?php }else{ ?> 
+                    <a href="usurpedpost.php"><p>Publier un message</p></a>
+                <?php } ?>
             </aside>
             <main>
                 <?php
-                /**
-                 * Etape 3: récupérer tous les messages de l'utilisatrice
-                 */
+
                 $laQuestionEnSql = "
                     SELECT posts.content, posts.created, users.alias as author_name, 
                     COUNT(likes.id) as like_number, GROUP_CONCAT(DISTINCT tags.label) AS taglist 
@@ -67,9 +76,7 @@
                     echo("Échec de la requete : " . $mysqli->error);
                 }
 
-                /**
-                 * Etape 4: @todo Parcourir les messsages et remplir correctement le HTML avec les bonnes valeurs php
-                 */
+
                 while ($post = $lesInformations->fetch_assoc())
                 {
 

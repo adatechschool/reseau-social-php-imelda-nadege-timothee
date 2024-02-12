@@ -8,6 +8,7 @@
     </head>
     <body>
     <?php
+        include './redirection.php';
         include './header.php';
         ?>
         <div id="wrapper">

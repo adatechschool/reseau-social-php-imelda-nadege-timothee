@@ -8,36 +8,22 @@
     </head>
     <body>
     <?php
+        include './redirection.php';
         include './header.php';
         ?>
         <div id="wrapper">
             <?php
-            /**
-             * Cette page est TRES similaire à wall.php. 
-             * Vous avez sensiblement à y faire la meme chose.
-             * Il y a un seul point qui change c'est la requete sql.
-             */
-            /**
-             * Etape 1: Le mur concerne un utilisateur en particulier
-             */
             $userId = intval($_GET['user_id']);
             ?>
             <?php
-            /**
-             * Etape 2: se connecter à la base de donnée
-             */
             $mysqli = new mysqli("localhost", "root", "", "socialnetwork");
             ?>
 
             <aside>
                 <?php
-                /**
-                 * Etape 3: récupérer le nom de l'utilisateur
-                 */
                 $laQuestionEnSql = "SELECT * FROM `users` WHERE id= '$userId' ";
                 $lesInformations = $mysqli->query($laQuestionEnSql);
                 $user = $lesInformations->fetch_assoc();
-                //@todo: afficher le résultat de la ligne ci dessous, remplacer XXX par l'alias et effacer la ligne ci-dessous
                 ?>
                 <img src="user.jpg" alt="Portrait de l'utilisatrice"/>
                 <section>
@@ -51,11 +37,9 @@
             </aside>
             <main>
                 <?php
-                /**
-                 * Etape 3: récupérer tous les messages des abonnements
-                 */
                 $laQuestionEnSql = "
                     SELECT posts.content,
+                    posts.id,
                     posts.created,
                     posts.user_id,
                     users.alias as author_name,  
@@ -77,10 +61,6 @@
                     echo("Échec de la requete : " . $mysqli->error);
                 }
 
-                /**
-                 * Etape 4: @todo Parcourir les messsages et remplir correctement le HTML avec les bonnes valeurs php
-                 * A vous de retrouver comment faire la boucle while de parcours...
-                 */
                 while ($post = $lesInformations -> fetch_assoc()){                
                 ?> 
 
@@ -92,11 +72,32 @@
                     <div>
                         <p><?php echo $post['content'] ?> </p>
                     </div>                                            
-                    <footer>
-                        <small>♥ <?php echo $post['like_number'] ?> </small>
-                        <a href="tags.php?tag_id=<?php echo $tag['id']?>">#<?php echo $post['taglist'] ?> </a>,
+                    <?php
+                            session_start();
 
-                    </footer>
+                            $connected_id = intval($_SESSION['connected_id']);
+
+                            $post_id = $post['id'];
+                            
+                            $addLike = 'INSERT INTO likes (user_id, post_id) '
+                            . "VALUES ('$connected_id' , '$post_id')";
+                            
+                            if (isset($_POST['like'])){ 
+                                $mysqli->query($addLike); 
+                                
+                                $getNumLike = "SELECT COUNT(id) as like_number FROM likes WHERE post_id = $post_id";
+                                
+                                $mysqli->query($getNumLike);
+                            }
+                            ?>
+                        <form action="" method="post">
+                            <footer>
+                                <small>     
+                                <input type="submit" value="♥ <?php echo $post['like_number']?>" name="like">
+                                </small>
+                                <a href="tags.php?tag_id=<?php echo $tag['id']?>"><?php echo $post['taglist']?></a>,
+                            </footer>
+                        </form>
                 </article>
                 <?php
                 }

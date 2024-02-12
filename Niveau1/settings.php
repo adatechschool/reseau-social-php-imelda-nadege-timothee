@@ -8,6 +8,7 @@
     </head>
     <body>
     <?php
+        include './redirection.php';
         include './header.php';
         ?>
         <div id="wrapper" class='profile'>
@@ -20,27 +21,19 @@
                     <p>Sur cette page vous trouverez les informations de l'utilisatrice
                         n° <?php echo intval($_GET['user_id']) ?></p>
 
+                    <form action="logout.php" method="post">
+                        <input type="submit" value="Logout">
+                    </form>
                 </section>
             </aside>
             <main>
                 <?php
-                /**
-                 * Etape 1: Les paramètres concernent une utilisatrice en particulier
-                 * La première étape est donc de trouver quel est l'id de l'utilisatrice
-                 * Celui ci est indiqué en parametre GET de la page sous la forme user_id=...
-                 * Documentation : https://www.php.net/manual/fr/reserved.variables.get.php
-                 * ... mais en résumé c'est une manière de passer des informations à la page en ajoutant des choses dans l'url
-                 */
                 $userId = intval($_GET['user_id']);
 
-                /**
-                 * Etape 2: se connecter à la base de donnée
-                 */
+
                 $mysqli = new mysqli("localhost", "root", "", "socialnetwork");
 
-                /**
-                 * Etape 3: récupérer le nom de l'utilisateur
-                 */
+
                 $laQuestionEnSql = "
                     SELECT users.*, 
                     count(DISTINCT posts.id) as totalpost, 
@@ -60,9 +53,7 @@
                 }
                 $user = $lesInformations->fetch_assoc();
 
-                /**
-                 * Etape 4: à vous de jouer
-                 */
+
                 ?>                
                 <article class='parameters'>
                     <h3>Mes paramètres</h3>
