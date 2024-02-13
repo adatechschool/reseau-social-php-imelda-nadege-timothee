@@ -17,8 +17,7 @@ $connected_id = $_SESSION['connected_id'];
 
             <aside>
                 <h2>Présentation</h2>
-                <p>Sur cette page on peut poster un message en se faisant 
-                    passer pour quelqu'un d'autre</p>
+                <p>Sur cette page on peut poster un message sur son mur</p>
             </aside>
             <main>
                 <article>

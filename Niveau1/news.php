@@ -21,8 +21,7 @@
                 <img src="user.jpg" alt="Portrait de l'utilisatrice"/>
                 <section>
                     <h3>Présentation</h3>
-                    <p>Sur cette page vous trouverez les derniers messages de
-                        tous les utilisatrices du site.</p>
+                    <p>Sur cette page vous trouverez les derniers messages postés</p>
                 </section>
             </aside>    
             <main>

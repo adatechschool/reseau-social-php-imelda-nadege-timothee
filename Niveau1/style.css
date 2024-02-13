@@ -1,5 +1,5 @@
 body{
-    background-color: #003;
+    background-color: #fbfbf2;
     font-family: Arial;
 }
 
@@ -12,10 +12,21 @@ body>header{
     width:80em;
     margin:0 auto 2em auto;    
     padding:0;
+    border: solid 1px black;
+    border-radius: 10px;
 
 }
+
+.img{
+    background-color: #f0f3f9;
+    border-radius: 10px 0px 0px 10px;
+}
+
 body>header img{
     height:5em;
+    padding-top: 2px;   
+    border-radius: 10px;
+    padding-right: 3px;
 }
 body>header #menu {
     display:flex;
@@ -31,7 +42,8 @@ body>header #menu a{
 }
 body>header a:hover
 {
-    background-color: #99b;
+    background-color: #c42348;
+    color: white;
 }
 body>header ul{list-style: none;}
 body>header #user

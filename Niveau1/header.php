@@ -6,7 +6,9 @@
 
 <html>
         <header>
-            <img src="resoc.jpg" alt="Logo de notre réseau social"/> 
+            <div class="img">
+                <img src="logo.png" alt="Logo de notre réseau social"/> 
+            </div>
             <nav id="menu">
                 <a href="news.php">Actualités</a>
                 <a href="wall.php?user_id=<?php echo $userId?>">Mur</a>

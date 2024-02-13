@@ -18,8 +18,7 @@
                 <img src="user.jpg" alt="Portrait de l'utilisatrice"/>
                 <section>
                     <h3>Présentation</h3>
-                    <p>Sur cette page vous trouverez les informations de l'utilisatrice
-                        n° <?php echo intval($_GET['user_id']) ?></p>
+                    <p>Sur cette page vous trouverez des informations vous concernant.</p>
 
                     <form action="logout.php" method="post">
                         <input type="submit" value="Logout">
