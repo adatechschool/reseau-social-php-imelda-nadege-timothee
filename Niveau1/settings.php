@@ -21,7 +21,7 @@
                     <p>Sur cette page vous trouverez des informations vous concernant.</p>
 
                     <form action="logout.php" method="post">
-                        <input type="submit" value="Logout">
+                        <input class='like' type="submit" value="Logout">
                     </form>
                 </section>
             </aside>

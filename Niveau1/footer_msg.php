@@ -20,7 +20,7 @@
 <form action="" method="post">
     <footer>
         <small>     
-        <input type="submit" value="♥ <?php echo $post['like_number']?>" name="like">
+        <input class="like" type="submit" value="♥ <?php echo $post['like_number']?>" name="like">
         </small>
         <a href="tags.php?tag_id=<?php echo $tag['id']?>"><?php echo $post['taglist']?></a>,
     </footer>

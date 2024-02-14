@@ -77,7 +77,7 @@ session_start();
                             <dt><label for='motpasse'>Mot de passe</label></dt>
                             <dd><input type='password'name='motpasse'></dd>
                         </dl>
-                        <input type='submit'>
+                        <input class='like' type='submit'>
                     </form>
                     <p>
                         Pas de compte?
