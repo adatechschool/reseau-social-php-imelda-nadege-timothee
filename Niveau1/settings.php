@@ -15,7 +15,7 @@
 
 
             <aside>
-                <img src="user.jpg" alt="Portrait de l'utilisatrice"/>
+                <img src="user.jpg" alt="avatar"/>
                 <section>
                     <h3>Présentation</h3>
                     <p>Sur cette page vous trouverez des informations vous concernant.</p>
